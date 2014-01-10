@@ -4654,7 +4654,7 @@ diff_open(struct view *view, enum open_flags flags)
 {
 	static const char *diff_argv[] = {
 		"git", "show", encoding_arg, "--pretty=fuller", "--root",
-			"--patch-with-stat",
+			"--patch-with-stat", "-m", "--first-parent",
 			opt_notes_arg, opt_diff_context_arg, opt_ignore_space_arg,
 			"%(diffargs)", "--no-color", "%(commit)", "--", "%(fileargs)", NULL
 	};
