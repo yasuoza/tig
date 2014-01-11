@@ -504,6 +504,7 @@ static char opt_editor[SIZEOF_STR]	= "";
 static bool opt_editor_lineno		= TRUE;
 static FILE *opt_tty			= NULL;
 static const char **opt_diff_argv	= NULL;
+static const char **opt_show_argv   = NULL;
 static const char **opt_rev_argv	= NULL;
 static const char **opt_file_argv	= NULL;
 static const char **opt_blame_argv	= NULL;
@@ -1505,6 +1506,9 @@ option_set_command(int argc, const char *argv[])
 
 	if (!strcmp(argv[0], "diff-options"))
 		return parse_args(&opt_diff_argv, argv + 2);
+
+    if (!strcmp(argv[0], "show-options"))
+        return parse_args(&opt_show_argv, argv + 2);
 
 	if (argc != 3)
 		return ERROR_WRONG_NUMBER_OF_ARGUMENTS;
@@ -3191,6 +3195,10 @@ format_argv(struct view *view, const char ***dst_argv, const char *src_argv[], b
 			if (!format_append_argv(&format, dst_argv, opt_diff_argv))
 				break;
 
+		} else if (!strcmp(arg, "%(showargs)")) {
+			if (!format_append_argv(&format, dst_argv, opt_show_argv))
+				break;
+
 		} else if (!strcmp(arg, "%(blameargs)")) {
 			if (!format_append_argv(&format, dst_argv, opt_blame_argv))
 				break;
@@ -4654,9 +4662,9 @@ diff_open(struct view *view, enum open_flags flags)
 {
 	static const char *diff_argv[] = {
 		"git", "show", encoding_arg, "--pretty=fuller", "--root",
-			"--patch-with-stat", "-m", "--first-parent",
+			"--patch-with-stat",
 			opt_notes_arg, opt_diff_context_arg, opt_ignore_space_arg,
-			"%(diffargs)", "--no-color", "%(commit)", "--", "%(fileargs)", NULL
+			"%(diffargs)", "%(showargs)", "--no-color", "%(commit)", "--", "%(fileargs)", NULL
 	};
 
 	return begin_update(view, NULL, diff_argv, flags);
